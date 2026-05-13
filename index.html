@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Micke Karlsson — Backend, Databases & AI-enabled Engineering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #F4EFE6;
+    --paper: #FBF8F2;
+    --ink: #1E1E1C;
+    --ink-soft: #4A4942;
+    --muted: #8A857A;
+    --rule: #E2DBCC;
+    --forest: #2E4A3B;
+    --forest-soft: #DCE4DD;
+    --ochre: #B5763A;
+    --stone: #6B5D4F;
+    --mint: #6FB496;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "DM Sans", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    box-shadow: inset 6px 0 0 var(--mint);
+    min-height: 100vh;
+  }
+  a { color: var(--forest); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .page {
+    max-width: 880px;
+    margin: 0 auto;
+    background: var(--paper);
+    padding: 40px 44px 64px;
+    min-height: 100vh;
+    border-left: 1px solid var(--rule);
+    border-right: 1px solid var(--rule);
+  }
+
+  /* Topbar */
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    gap: 12px;
+  }
+  .pdf-btn {
+    background: var(--forest);
+    color: #fff;
+    border: 0;
+    border-radius: 999px;
+    padding: 7px 14px;
+    font: 600 12px/1 "DM Sans", sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+  .pdf-btn:hover { opacity: 0.9; }
+  .locale { display: flex; gap: 6px; font-size: 12px; }
+  .locale a {
+    padding: 5px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+  }
+  .locale a.active {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+  }
+
+  /* Masthead */
+  .masthead {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 20px;
+    align-items: center;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-image: url("avatar.jpeg");
+    background-size: cover;
+    background-position: 32% 38%;
+    background-color: var(--rule);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    align-self: center;
+    justify-self: center;
+  }
+  .name {
+    margin: 0;
+    font: 700 38px/1.05 "Rubik", sans-serif;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .role-main {
+    margin-top: 6px;
+    font: 700 14.5px/1.3 "DM Sans", sans-serif;
+    color: var(--forest);
+  }
+  .role-sub {
+    margin-top: 2px;
+    font: 500 13.5px/1.4 "DM Sans", sans-serif;
+    color: var(--ink-soft);
+  }
+  .contact {
+    text-align: right;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .contact div { white-space: nowrap; }
+  .contact a { color: var(--ink); }
+
+  /* Strip / chips */
+  .strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 22px 0 28px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: var(--forest-soft);
+    color: var(--forest);
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .chip .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--mint);
+    box-shadow: 0 0 0 3px rgba(111,180,150,0.25);
+  }
+
+  /* Hero */
+  .hero {
+    font: 400 18px/1.55 "Rubik", sans-serif;
+    color: var(--ink);
+    margin: 4px 0 14px;
+  }
+  .hero b { font-weight: 700; color: var(--forest); }
+  .hero-sub {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0 0 30px;
+    max-width: 70ch;
+  }
+
+  /* Section title */
+  .section-title {
+    font: 700 11px/1 "DM Sans", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--stone);
+    margin: 0 0 16px;
+  }
+
+  /* Pillars */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .pillar {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 16px 16px 18px;
+  }
+  .pillar .num {
+    font: 700 10.5px/1 "DM Sans", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ochre);
+    margin-bottom: 10px;
+  }
+  .pillar h3 {
+    font: 800 14.5px/1.3 "Rubik", sans-serif;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .pillar p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* Packages */
+  .pkgs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+  .pkg {
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 18px 16px;
+  }
+  .pkg .tag {
+    font: 700 10.5px/1 "DM Sans", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ochre);
+    margin-bottom: 8px;
+  }
+  .pkg h3 {
+    font: 800 16px/1.25 "Rubik", sans-serif;
+    margin: 0 0 4px;
+    color: var(--ink);
+  }
+  .pkg .dur {
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .pkg p {
+    margin: 0 0 10px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+  .pkg ul {
+    margin: 0 0 12px;
+    padding-left: 18px;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .pkg ul li { margin-bottom: 2px; }
+  .pkg hr {
+    border: 0;
+    border-top: 1px dashed var(--rule);
+    margin: 10px 0;
+  }
+  .pkg .outcome {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--stone);
+    margin: 0;
+  }
+
+  /* Brands */
+  .brands {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.8;
+    margin-bottom: 36px;
+  }
+  .brands span:not(:last-child)::after {
+    content: " · ";
+    color: var(--muted);
+    margin: 0 4px;
+  }
+
+  /* Experience */
+  .exp {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    row-gap: 10px;
+    column-gap: 18px;
+    font-size: 13.5px;
+    margin-bottom: 36px;
+  }
+  .exp .yr {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+  .exp .row .ttl {
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .exp .row .desc {
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    margin-top: 1px;
+  }
+
+  /* Two-col */
+  .twocol {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-bottom: 36px;
+  }
+  .twocol .section dl {
+    margin: 0;
+    font-size: 13px;
+  }
+  .twocol .section dt {
+    font-weight: 600;
+    color: var(--ink);
+    margin-top: 8px;
+  }
+  .twocol .section dt:first-child { margin-top: 0; }
+  .twocol .section dd {
+    margin: 2px 0 0;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+  }
+
+  /* CTA */
+  .cta {
+    background: var(--forest);
+    color: #fff;
+    border-radius: 12px;
+    padding: 22px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .cta h2 {
+    margin: 0 0 4px;
+    font: 700 18px/1.2 "Rubik", sans-serif;
+  }
+  .cta p { margin: 0; font-size: 13px; opacity: 0.85; }
+  .cta-actions { display: flex; gap: 10px; }
+  .cta-actions a {
+    background: #fff;
+    color: var(--forest);
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  /* Footer */
+  .foot {
+    text-align: center;
+    color: var(--muted);
+    font-size: 11.5px;
+    border-top: 1px solid var(--rule);
+    padding-top: 14px;
+  }
+
+  /* Print */
+  @media print {
+    * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    @page { size: A4; margin: 18mm 20mm; }
+    html, body { background: #fff; }
+    body { box-shadow: none; font-size: 9.5pt; line-height: 1.45; }
+    .page { background: #fff; max-width: none; padding: 0; border: 0; min-height: 0; }
+    .topbar, .cta { display: none !important; }
+    .pdf-hide { display: none !important; }
+    .pdf-break { break-before: page; }
+
+    .masthead { padding-bottom: 10pt; }
+    .name { font-size: 22pt; }
+    .role-main { font-size: 10pt; }
+    .role-sub { font-size: 9pt; }
+    .contact { font-size: 9pt; }
+    .avatar { clip-path: circle(50%); box-shadow: none; }
+
+    .strip { display: block; margin: 8pt 0 12pt; font-size: 9pt; color: var(--ink-soft); }
+    .chip { background: none; padding: 0; color: var(--ink-soft); font-weight: 500; }
+    .chip .dot { display: none; }
+    .chip:not(:last-child)::after { content: " · "; margin: 0 4px; color: var(--muted); }
+
+    .hero { font-size: 11pt; margin-bottom: 8pt; }
+    .hero-sub { font-size: 9pt; margin-bottom: 14pt; }
+
+    .pillars { gap: 8pt; margin-bottom: 16pt; }
+    .pillar { padding: 10pt 10pt; }
+    .pillar h3 { font-size: 10.5pt; }
+    .pillar p { font-size: 8.5pt; }
+
+    .pkgs { gap: 8pt; margin-bottom: 16pt; }
+    .pkg { padding: 10pt 10pt; }
+    .pkg h3 { font-size: 10pt; white-space: nowrap; }
+    .pkg p, .pkg ul { font-size: 8pt; }
+    .pkg ul li { font-size: 7.5pt; }
+
+    .exp { font-size: 9pt; row-gap: 5pt; }
+    .exp .row .desc { font-size: 8.5pt; }
+
+    .twocol { gap: 16pt; }
+    .twocol .section dl { font-size: 9pt; }
+    .twocol .section dd { font-size: 8.5pt; }
+
+    .brands { font-size: 9pt; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+
+  <div class="topbar">
+    <button class="pdf-btn" onclick="window.print()">↓ Save as PDF</button>
+    <nav class="locale">
+      <a href="index.html" class="active">EN</a>
+      <a href="sv.html">SV</a>
+    </nav>
+  </div>
+
+  <header class="masthead">
+    <div class="avatar" aria-hidden="true"></div>
+    <div>
+      <h1 class="name">Micke Karlsson</h1>
+      <div class="role-main">Backend, Databases &amp; AI-enabled Engineering</div>
+      <div class="role-sub">Independent senior developer · 38 years professional · Mikadako AB</div>
+    </div>
+    <div class="contact">
+      <div><a href="mailto:micke@mikadako.com">micke@mikadako.com</a></div>
+      <div>+46 (0)70-982 13 81</div>
+      <div><a href="https://www.linkedin.com/in/micke-karlsson-1ba7751/">linkedin.com/in/micke-karlsson</a></div>
+      <div><a href="https://www.mikadako.com">www.mikadako.com</a></div>
+      <div>Visby, Sweden</div>
+    </div>
+  </header>
+
+  <div class="strip">
+    <span class="chip"><span class="dot"></span>Available for new engagements</span>
+    <span class="chip">Visby / Stockholm or remote</span>
+    <span class="chip">Swedish &amp; English</span>
+    <span class="chip">Invoicing via Mikadako AB</span>
+    <span class="chip">EU / SE data residency</span>
+  </div>
+
+  <p class="hero">
+    Backend and database engineer with <b>38 years of professional programming</b>, an architect's long view, and a working command of modern AI-enabled development.
+  </p>
+  <p class="hero-sub">
+    I've shipped multi-year systems from greenfield through maintenance — large object hierarchies, schemas I've lived with for a decade, and codebases I've inherited and rescued. My work spans relational and NoSQL databases, big-data streaming, low-latency transaction handling, and integrations across heterogeneous environments. Since 2007 I've followed AI from constraint propagation and Lisp through to today's LLMs and agentic coding, and I bring that perspective into the teams I work with.
+  </p>
+
+  <h2 class="section-title">Three things I bring to the table</h2>
+  <div class="pillars">
+    <div class="pillar">
+      <div class="num">01 · Architecture &amp; Systems</div>
+      <h3>Design with the long view</h3>
+      <p>Multi-year projects from day one through maintenance taught me how today's schema becomes tomorrow's constraint. I attack complex systems at the right level with the right method.</p>
+    </div>
+    <div class="pillar">
+      <div class="num">02 · Databases &amp; Big Data</div>
+      <h3>Relational to petabyte streaming</h3>
+      <p>Oracle and PL/SQL through ClickHouse, Postgres, Mongo, Kafka and Arrow. Comfortable with ETL, ingestion, CDC, low-latency high-volume transactions, and the operational reality behind them.</p>
+    </div>
+    <div class="pillar">
+      <div class="num">03 · AI &amp; Automation</div>
+      <h3>Lisp-conf veteran turned LLM operator</h3>
+      <p>Classical AI roots (constraints, GP, KR) plus hands-on with PyTorch, Ollama, Airflow, Jupyter and local-LLM integration. I make agentic coding and automation real for the team, not just the demo.</p>
+    </div>
+  </div>
+
+  <h2 class="section-title">How to hire me</h2>
+  <div class="pkgs">
+    <div class="pkg">
+      <div class="tag">Package 01</div>
+      <h3>Database modernisation</h3>
+      <div class="dur">4–12 weeks · part- or full-time</div>
+      <p>For teams whose Oracle / SQL Server estate is straining under load, growth, or accumulated debt.</p>
+      <ul>
+        <li>Schema review and targeted refactor</li>
+        <li>Performance &amp; query tuning</li>
+        <li>Migration paths to ClickHouse / Postgres / cloud</li>
+        <li>CDC and data-centric regression testing</li>
+      </ul>
+      <hr />
+      <p class="outcome">Outcome: a faster, observable, testable data layer.</p>
+    </div>
+    <div class="pkg">
+      <div class="tag">Package 02</div>
+      <h3>AI-enabled dev workflow</h3>
+      <div class="dur">3–6 weeks · 1–3 days / week</div>
+      <p>Bring agentic coding, local LLMs and ML environments into a real product team.</p>
+      <ul>
+        <li>Tooling assessment &amp; rollout plan</li>
+        <li>PyTorch / Ollama / Airflow / Jupyter setup</li>
+        <li>Local LLM integration into the product</li>
+        <li>Mentoring on agentic patterns &amp; review</li>
+      </ul>
+      <hr />
+      <p class="outcome">Outcome: a measurable shift in developer throughput.</p>
+    </div>
+    <div class="pkg">
+      <div class="tag">Package 03</div>
+      <h3>Legacy codebase rescue</h3>
+      <div class="dur">6–16 weeks · embedded with team</div>
+      <p>For C / C++ / Perl / Java estates that have outlived their original team.</p>
+      <ul>
+        <li>Build &amp; deployment system revamp</li>
+        <li>Test infrastructure and CI hooks</li>
+        <li>Targeted refactor of identified hotspots</li>
+        <li>Documentation and on-call onboarding</li>
+      </ul>
+      <hr />
+      <p class="outcome">Outcome: a codebase a new team can actually own.</p>
+    </div>
+  </div>
+
+  <section class="pdf-break">
+    <h2 class="section-title">Selected clients</h2>
+    <div class="brands">
+      <span>Länsförsäkringar</span>
+      <span>Leva Husfabrik</span>
+      <span>TickUp</span>
+      <span>castLabs / You.i TV / Sky</span>
+      <span>King (Candy Crush Saga)</span>
+      <span>.SE / Internetstiftelsen</span>
+      <span>Megger</span>
+      <span>Kambi Sports Solutions</span>
+      <span>Swedish Heart-Lung Foundation</span>
+      <span>Swedish Federal Police</span>
+      <span>ACE Interactive</span>
+      <span>Oktavilla</span>
+      <span>Swedish Premium Pension Authority</span>
+      <span>Essnet</span>
+      <span>ORC Software</span>
+      <span>Dagens Nyheter</span>
+      <span>Skandia</span>
+    </div>
+  </section>
+
+  <h2 class="section-title">Experience</h2>
+  <div class="exp">
+
+    <div class="yr">2023–2026</div>
+    <div class="row">
+      <div class="ttl">SQL / PL/SQL developer · Länsförsäkringar</div>
+      <div class="desc">Built a data-centric regression testing framework and a CDC solution for the Fadata INSIS insurance system. Performance, stability, upgrade and enhancement work. <em>Oracle, PL/SQL, Java, Azure DevOps, Oracle ADF.</em></div>
+    </div>
+
+    <div class="yr">2021–2023</div>
+    <div class="row">
+      <div class="ttl">Senior developer · Leva Husfabrik</div>
+      <div class="desc">House design, configuration, visualisation and BIM system: from a simple spec to drawings, 3D models, BOM and assembly instructions. <em>C#, .NET, Revit, AutoCAD, AutoLISP, Blender, Babylon.js.</em></div>
+    </div>
+
+    <div class="yr">2020–2021</div>
+    <div class="row">
+      <div class="ttl">Head of databases · TickUp (quantitative hedge fund)</div>
+      <div class="desc">Stood up the data &amp; big-data architecture for an in-house compute centre; ETL, ingestion and streaming of petabytes. <em>C++, Python, gRPC, ClickHouse, Postgres, MS SQL, Mongo, Minio, Dremio, Arrow, Kafka, Airflow, Docker, Kubernetes.</em></div>
+    </div>
+
+    <div class="yr">2019</div>
+    <div class="row">
+      <div class="ttl">C++ engineer · Entecon / castLabs / You.i TV / Sky</div>
+      <div class="desc">Ported and enhanced video player, JS engine and streaming platform to PlayStation 4. <em>C++, Objective-C, V8, Shaka Player Embedded, Orbis OS, Jenkins.</em></div>
+    </div>
+
+    <div class="yr">2018–2019</div>
+    <div class="row">
+      <div class="ttl">C++ engineer · King (Candy Crush Saga)</div>
+      <div class="desc">Adtech, monetisation and rewarded-video integrations across iOS, Android and the Facebook web build. Extensive A/B testing and continuous delivery. <em>C++, Objective-C, Java, Python, Jenkins.</em></div>
+    </div>
+
+    <div class="yr">2016–2018</div>
+    <div class="row">
+      <div class="ttl">Developer · .SE (Swedish domain registry)</div>
+      <div class="desc">Rebuilt and moved the Swedish domain name registry to the cloud as a dockerised microservices architecture. <em>Go, Perl, Python, MySQL, MongoDB, RabbitMQ, Docker, AWS (RDS, EC2), Jenkins.</em></div>
+    </div>
+
+    <div class="yr">2015–2016</div>
+    <div class="row">
+      <div class="ttl">Embedded / Windows developer · Megger</div>
+      <div class="desc">Embedded and Windows-hosted software for electrical instruments analysing circuit breakers in high-voltage power systems. Build system revamp. <em>C, C++, C#, Delphi, MFC, .NET, Perl, PowerShell.</em></div>
+    </div>
+
+    <div class="yr">2014–2015</div>
+    <div class="row">
+      <div class="ttl">Senior developer · Leva Husfabrik (first engagement)</div>
+      <div class="desc">Initial build of the house design, configuration and BIM system. <em>C#, .NET, AutoCAD, AutoLISP, Blender, Babylon.js.</em></div>
+    </div>
+
+    <div class="yr">2013–2014</div>
+    <div class="row">
+      <div class="ttl">Senior developer · Kambi Sports Solutions</div>
+      <div class="desc">From-scratch cash-handling sports-betting terminal, cashier terminal and over-the-counter solution. Touch screens, printers, barcode scanners, banknote readers, HW security tokens. <em>C++, JS, Perl, Java, CEF.</em></div>
+    </div>
+
+    <div class="yr">2013</div>
+    <div class="row">
+      <div class="ttl">iOS developer · Swedish Heart-Lung Foundation</div>
+      <div class="desc">iPhone / iPad app for medical market: interactive maps, animations, streaming video, asynchronous XML-RPC. <em>Xcode, iOS, Objective-C.</em></div>
+    </div>
+
+    <div class="yr">2011–2012</div>
+    <div class="row">
+      <div class="ttl">C++ developer · Swedish Federal Police</div>
+      <div class="desc">Application servers and database backend for operations planning and resource allocation. 32-bit Solaris to 64-bit Linux port; build &amp; deployment revamp. <em>C++, Java, SQL, MQ, Ingres (incl. 4GL), CVS, Perl, Make, Ant.</em></div>
+    </div>
+
+    <div class="yr">2009–2010</div>
+    <div class="row">
+      <div class="ttl">Backend developer · Oktavilla</div>
+      <div class="desc">Backend of a social web app. <em>Common Lisp, UCW, SLIME, Elephant, Ubuntu.</em></div>
+    </div>
+
+    <div class="yr">2006–2010</div>
+    <div class="row">
+      <div class="ttl">C++ / PL/SQL developer · ACE Interactive</div>
+      <div class="desc">Transaction-intensive in-house application server: componentisation, performance, batches and PL/SQL. <em>C++ (MSVC &amp; GCC, win32/Linux), Oracle PL/SQL, Perforce, ClearQuest.</em></div>
+    </div>
+
+    <div class="yr">2008–2009</div>
+    <div class="row">
+      <div class="ttl">Developer · Swedish Premium Pension Authority</div>
+      <div class="desc">Account and fund-trade system; web-based build &amp; delivery system. <em>Perl, C, Java, Make, Ant, Maven, Apache, Oracle PL/SQL, Red Hat Linux, CVS.</em></div>
+    </div>
+
+    <div class="yr">2005–2006</div>
+    <div class="row">
+      <div class="ttl">Independent · Mikadako AB</div>
+      <div class="desc">Scheduling and salary calculation in Common Lisp; Lotus Notes install routines; RAD J2EE / SOA / transaction-handling work. <em>Common Lisp, Notes, C++, Java, JBoss, MySQL, PostgreSQL.</em></div>
+    </div>
+
+    <div class="yr">2003–2004</div>
+    <div class="row">
+      <div class="ttl">Developer · Essnet (sports betting)</div>
+      <div class="desc">Win-amount, jackpot, fund and liability calculation; intra-game operator payments. <em>C on VMS, Oracle RDB, DECforms, Embedded SQL, Perl, DCL.</em></div>
+    </div>
+
+    <div class="yr">2003</div>
+    <div class="row">
+      <div class="ttl">Developer · ORC Software</div>
+      <div class="desc">Business logic, nightly builds and release/version handling for a financial stock and option trading platform. <em>C, Objective-C, MSVC, Solaris, macOS, Windows, Make, Perl, CVS.</em></div>
+    </div>
+
+    <div class="yr">2001–2002</div>
+    <div class="row">
+      <div class="ttl">Developer · Titan Analys</div>
+      <div class="desc">Traffic-analysis system for Meridian telephony switches. <em>Perl, C++, Java, Linux, FreeBSD, Windows.</em></div>
+    </div>
+
+    <div class="yr">2000</div>
+    <div class="row">
+      <div class="ttl">Developer / mentor · Teknik i Media / Dagens Nyheter</div>
+      <div class="desc">CRM / billing / edition circulation analysis. Dev environment, tools, version handling, database upgrades and tuning. <em>C, Perl, Embedded SQL, PL/SQL, Solaris, VB.</em></div>
+    </div>
+
+    <div class="yr">1999–2000</div>
+    <div class="row">
+      <div class="ttl">Developer · Essnet</div>
+      <div class="desc">Transaction-handling engine: internationalisation, language independence and RTL support across a large C codebase. <em>C on VMS, Oracle RDB, Embedded SQL, PL/SQL, Perl, Java.</em></div>
+    </div>
+
+    <div class="yr">1998</div>
+    <div class="row">
+      <div class="ttl">Developer · Skandia IT</div>
+      <div class="desc">Mainframe-based intranet application. <em>REXX, TSO, ISPF, Shadow Web Server, DB2, JavaScript, MVS.</em></div>
+    </div>
+
+    <div class="yr">1995–1997</div>
+    <div class="row">
+      <div class="ttl">Developer · JiG System, Memex I&amp;C, April System, others</div>
+      <div class="desc">Workflow system with accounts payable, invoice imaging and financial-system integration; CTI communications modules; terminal emulator port; e-learning adaptation. <em>Gupta SQLwindows, SQLbase, MS SQL, C/C++, OS/2, Windows.</em></div>
+    </div>
+
+    <div class="yr">1988–1992</div>
+    <div class="row">
+      <div class="ttl">Developer · Branschdata</div>
+      <div class="desc">Multiple generations of a client-server system for computer-integrated telephony. <em>C, Pascal, REXX, DOS, OS/2, VM/SP, ISAM Ctree.</em></div>
+    </div>
+
+    <div class="yr">1987</div>
+    <div class="row">
+      <div class="ttl">Mainframe computer operator · City of Stockholm</div>
+      <div class="desc"><em>MVS, TSO, VTAM, SNA, NCCF, IMS, CICS.</em></div>
+    </div>
+
+  </div>
+
+  <div class="twocol pdf-break">
+    <div class="section">
+      <h2 class="section-title">Tech stack</h2>
+      <dl>
+        <dt>Languages</dt>
+        <dd>C, C++, C#, Java, Go, Perl, Python, Common Lisp, JavaScript, Objective-C, REXX, Pascal</dd>
+        <dt>Databases</dt>
+        <dd>Oracle &amp; PL/SQL, Postgres, MySQL, MS SQL Server, ClickHouse, MongoDB, Oracle RDB, DB2, Ingres</dd>
+        <dt>Data &amp; streaming</dt>
+        <dd>Kafka, Airflow, Apache Arrow, Dremio, Minio, gRPC, ETL / CDC pipelines</dd>
+        <dt>AI / ML</dt>
+        <dd>PyTorch, TensorFlow, Ollama, Jupyter, local LLM integration, agentic coding, classical AI (constraints, GP, KR)</dd>
+        <dt>Platforms</dt>
+        <dd>Linux, Unix, Windows, macOS, iOS, Android, PlayStation, VMS, mainframe (MVS)</dd>
+        <dt>DevOps</dt>
+        <dd>Docker, Kubernetes, Jenkins, Azure DevOps, git, CI/CD, build &amp; release engineering</dd>
+      </dl>
+    </div>
+    <div class="section">
+      <h2 class="section-title">Education &amp; languages</h2>
+      <dl>
+        <dt>Professional programmer</dt>
+        <dd>Since 1988 — 38 years across systems engineering, databases and AI</dd>
+        <dt>Languages</dt>
+        <dd>Swedish (native), English (fluent)</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="cta">
+    <div>
+      <h2>Looking for someone who's seen this problem before?</h2>
+      <p>Drop a note — I usually reply within a day.</p>
+    </div>
+    <div class="cta-actions">
+      <a href="mailto:micke@mikadako.com">Email Micke</a>
+      <a href="https://www.linkedin.com/in/micke-karlsson-1ba7751/">Connect on LinkedIn</a>
+    </div>
+  </div>
+
+  <div class="foot">
+    Micke Karlsson · Visby, Sweden · Updated <span id="updated"></span>
+  </div>
+
+</main>
+
+<script>
+  (function () {
+    var d = new Date();
+    var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    document.getElementById("updated").textContent = months[d.getMonth()] + " " + d.getFullYear();
+  })();
+</script>
+
+</body>
+</html>
